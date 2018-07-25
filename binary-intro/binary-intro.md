@@ -1,4 +1,4 @@
- # Packaging and analyzing simple binary executables.
+# Packaging and analyzing simple binary executables.
 
 This tutorial is designed to be the first in a series of tutorials on how to use MAYHEM to work with binary applications. In this tutorial, we will:
 
