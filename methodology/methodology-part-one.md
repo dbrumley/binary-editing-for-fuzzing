@@ -85,7 +85,7 @@ Our instrumented program:
 
 Our instrumentation will now tell us what blocks we cover during an execution of the program. For example, if we supply the value `5` to this program as `user_input0()`, we will cover blocks `block-0`, `block-1`, and `block-5`.
 
-Coverage-based fuzzers favor inputs which cover additional blocks. In our example programs, if we supply the inputs `1`, `2`, `3`, `4`, up to `9` for `user_input0()`, we always cover the blocks `{block-0, block-1, block-5}`. Our fuzzer may begin by supplying the values `{user_input0 = 0, user_input1 = 0}`, and then randomly changing one of these numbers. Once we supply a value for `user_input0()` which is `>= 10`, our instrumentation will inform us we have covered new blocks.
+Coverage-based fuzzers favor inputs which cover additional blocks. In our example programs, if we supply the inputs `1`, `2`, `3`, `4`, up to `9` for `user_input0()`, we always cover the blocks `{block-0, block-1, block-5}`. Our fuzzer may begin by supplying the values `{user_input0 = 0, user_input1 = 0}`, and then randomly change one of these numbers. Once we supply a value for `user_input0()` which is `>= 10`, our instrumentation will inform us we have covered new blocks.
 
 The fuzzer saves inputs to its corpus, the set of inputs it continues to mutate, when inputs cover new code. Inputs that cover and exercise the same code the fuzzer has already tested are discarded. This allows the fuzzer more quickly discover new inputs which explore new parts of the program under test.
 
@@ -97,7 +97,7 @@ If you refer to the example in the Coverage-based fuzzing section, you will noti
 
 In a normal program execution, we use discrete values, referred to as concrete values. `1`, `37`, and `0xaabbccdd` are all concrete values. Symbolic execution allows us to replace discrete values with, "Symbolic values," or values without a concrete value. A symbolic value has no real value on its own. We can think of it as a placeholder value that means, "There is some value here, but we don't know what it is yet."
 
-In addition to introducting symbolic values, symbolic execution also builds up path constraints. Path constraints are a set of expressions, equalities and inequalities, that are true for a path in the program. `A == 10`, `A + B < 20` and `(A & 0xff) + B > 0x100` are all examples of constraints we may find in the path constraints of a symbolic execution engine.
+In addition to introducing symbolic values, symbolic execution also builds up path constraints. Path constraints are a set of expressions, equalities and inequalities, that are true for a path in the program. `A == 10`, `A + B < 20` and `(A & 0xff) + B > 0x100` are all examples of constraints we may find in the path constraints of a symbolic execution engine.
 
 We need to track all of our program's variables, some of which may be symbolic, and our path constraints, together as we symbolically execute our program. We will refer to the collection of these items as, "Symbolic State."
 
@@ -145,11 +145,11 @@ States:
     PathConstraints = {A < 10}
   State-1:
     Location: After block-3
-    Variables: {a = A, b = B}
+    Variables: {a = A, b = B, C = 0}
     PathConstraints = {A >= 10, B != 0xdeadbeef}
   State-2:
     Location: After block-4
-    Variables: {a = A, b = B}
+    Variables: {a = A, b = B, C = 100}
     PathConstraints = {A >= 10, B == 0xdeadbeef}
 ```
 
@@ -165,11 +165,11 @@ States:
     PathConstraints = {A < 10}
   State-1:
     Location: After block-5
-    Variables: {a = A, b = B}
+    Variables: {a = A, b = B, C = 0}
     PathConstraints = {A >= 10, B != 0xdeadbeef}
   State-2:
     Location: After block-5
-    Variables: {a = A, b = B}
+    Variables: {a = A, b = B, C = 100}
     PathConstraints = {A >= 10, B == 0xdeadbeef}
 ```
 
