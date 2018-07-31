@@ -120,13 +120,13 @@ else {
 <p>Our instrumented program:</p>
 <p><img src="graphs/graph-1.png" /></p>
 <p>Our instrumentation will now tell us what blocks we cover during an execution of the program. For example, if we supply the value <code>5</code> to this program as <code>user_input0()</code>, we will cover blocks <code>block-0</code>, <code>block-1</code>, and <code>block-5</code>.</p>
-<p>Coverage-based fuzzers favor inputs which cover additional blocks. In our example programs, if we supply the inputs <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, up to <code>9</code> for <code>user_input0()</code>, we always cover the blocks <code>{block-0, block-1, block-5}</code>. Our fuzzer may begin by supplying the values <code>{user_input0 = 0, user_input1 = 0}</code>, and then randomly changing one of these numbers. Once we supply a value for <code>user_input0()</code> which is <code>&gt;= 10</code>, our instrumentation will inform us we have covered new blocks.</p>
+<p>Coverage-based fuzzers favor inputs which cover additional blocks. In our example programs, if we supply the inputs <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, up to <code>9</code> for <code>user_input0()</code>, we always cover the blocks <code>{block-0, block-1, block-5}</code>. Our fuzzer may begin by supplying the values <code>{user_input0 = 0, user_input1 = 0}</code>, and then randomly change one of these numbers. Once we supply a value for <code>user_input0()</code> which is <code>&gt;= 10</code>, our instrumentation will inform us we have covered new blocks.</p>
 <p>The fuzzer saves inputs to its corpus, the set of inputs it continues to mutate, when inputs cover new code. Inputs that cover and exercise the same code the fuzzer has already tested are discarded. This allows the fuzzer more quickly discover new inputs which explore new parts of the program under test.</p>
 <h1 id="symbolic-execution">Symbolic Execution</h1>
 <h2 id="the-basics-of-symbolic-execution">The Basics of Symbolic Execution</h2>
 <p>If you refer to the example in the Coverage-based fuzzing section, you will notice the condition <code>b == 0xdeadbeef</code>. If the program is reading a 32-bit number, and the fuzzer is changing this number randomly, it will require the program an average of 2^31 (two to the power of thirty one) executions to discover this input. That’s 2,147,483,648 executions. These difficult-to-fuzz conditions and constraints are where symbolic execution shines.</p>
 <p>In a normal program execution, we use discrete values, referred to as concrete values. <code>1</code>, <code>37</code>, and <code>0xaabbccdd</code> are all concrete values. Symbolic execution allows us to replace discrete values with, “Symbolic values,” or values without a concrete value. A symbolic value has no real value on its own. We can think of it as a placeholder value that means, “There is some value here, but we don’t know what it is yet.”</p>
-<p>In addition to introducting symbolic values, symbolic execution also builds up path constraints. Path constraints are a set of expressions, equalities and inequalities, that are true for a path in the program. <code>A == 10</code>, <code>A + B &lt; 20</code> and <code>(A &amp; 0xff) + B &gt; 0x100</code> are all examples of constraints we may find in the path constraints of a symbolic execution engine.</p>
+<p>In addition to introducing symbolic values, symbolic execution also builds up path constraints. Path constraints are a set of expressions, equalities and inequalities, that are true for a path in the program. <code>A == 10</code>, <code>A + B &lt; 20</code> and <code>(A &amp; 0xff) + B &gt; 0x100</code> are all examples of constraints we may find in the path constraints of a symbolic execution engine.</p>
 <p>We need to track all of our program’s variables, some of which may be symbolic, and our path constraints, together as we symbolically execute our program. We will refer to the collection of these items as, “Symbolic State.”</p>
 <h2 id="an-example-symbolic-execution">An Example Symbolic Execution</h2>
 <p>Returning to our example program, we will perform an example symbolic execution, one step at a time. We begin by replacing the result of <code>user_input0()</code> with <code>A</code>, and <code>user_input1()</code> with <code>B</code>, so that at the end of <code>block-0</code> our symbolic execution may be tracking the following values:</p>
@@ -157,11 +157,11 @@ else {
     PathConstraints = {A &lt; 10}
   State-1:
     Location: After block-3
-    Variables: {a = A, b = B}
+    Variables: {a = A, b = B, C = 0}
     PathConstraints = {A &gt;= 10, B != 0xdeadbeef}
   State-2:
     Location: After block-4
-    Variables: {a = A, b = B}
+    Variables: {a = A, b = B, C = 100}
     PathConstraints = {A &gt;= 10, B == 0xdeadbeef}</code></pre>
 <p>And finally, we execute all symbolic states forward until the function ends.</p>
 <p><img src="graphs/graph-0.png" /></p>
@@ -172,11 +172,11 @@ else {
     PathConstraints = {A &lt; 10}
   State-1:
     Location: After block-5
-    Variables: {a = A, b = B}
+    Variables: {a = A, b = B, C = 0}
     PathConstraints = {A &gt;= 10, B != 0xdeadbeef}
   State-2:
     Location: After block-5
-    Variables: {a = A, b = B}
+    Variables: {a = A, b = B, C = 100}
     PathConstraints = {A &gt;= 10, B == 0xdeadbeef}</code></pre>
 <p>We are left with three states, with three different sets of path constraints:</p>
 <ul>
