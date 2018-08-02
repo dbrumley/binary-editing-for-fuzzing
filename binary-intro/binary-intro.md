@@ -45,7 +45,7 @@ To begin, we will install `objdump`. To do this on a debian-based distro (Debian
     apt-get upgrade -y && \
     apt-get install -y binutils
 
-We can now run `objdump` against a binary of our choosing.
+We can now run `objdump`, and see what options are available.
 
 ```
 root@d5ec5618a4ed:~# objdump /bin/ls
@@ -138,8 +138,6 @@ drwxr-xr-x 2 root root 4.0K Jul  9 20:45 corpus
 drwxr-xr-x 4 root root 4.0K Jul  9 20:45 root
 ```
 
-The `config.json` file contains auto-populated configuration information for MAYHEM, informing MAYHEM how to invoke and run our binary under test.
-
 The `corpus` directory contains seed inputs. Earlier, when we talked about mutation-based input generation, these are the inputs that MAYHEM would mutate. Fortunate for us, objdump parses linux executables, and we have plenty of those right in our example VM. Let's copy a couple over to the corpus directory.
 
 ```
@@ -149,6 +147,8 @@ The `corpus` directory contains seed inputs. Earlier, when we talked about mutat
 ```
 
 The root directory contains all of the files and dependencies required for MAYHEM to invoke and run the binary we wish to test. This directory has been auto-populated with the dynamically-linked runtime dependencies for us.
+
+The `config.json` file contains auto-populated configuration information for MAYHEM, informing MAYHEM how to invoke and run our binary under test.
 
 We do need to modify the `config.json` file. Let's take a look at what's inside first.
 
